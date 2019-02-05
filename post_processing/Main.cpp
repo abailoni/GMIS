@@ -230,6 +230,7 @@ void calc_inst_scores(vector<vector<pair<int, float>>> &in_4,
 }
 
 void parse_input_file(const char *INPUT_FILE)
+// Read the input data as 1D-arrays (both affs and class_prob have the same shape apparently)
 {
   FILE *file_ptr = fopen(INPUT_FILE, "rb");
   size_t readLenth = fread(&image_height, sizeof(image_height), 1, file_ptr);
@@ -669,16 +670,29 @@ int main(int argc, char *argv[])
     is_bike_prob_refine = true;
   }
 
+  // Read data:
   parse_input_file(INPUT_FILE);
+  // Build the graph for agglomeration:
   initialize_storage();
 
+  // This I guess is just some stuff for later on defining the graph (unionFind...?)
   preprocess_father();
+  // Here they combine affs and class_probs as specified in Eq. (5)
+  // For bike (class 7 or higher) and long range (64) connections they apply an additional sigmoid
   preprocess_instance_prob(is_bike_prob_refine);
+
+  // Background class is assigned as follow:
+  // we assign a pixel to background when there affs is < 0.3 in all directions
+  // Partially makes sense, because two pixels with background labels gets affinities close to zero,
+  // but I could also get affs, zero if I have a different instance (affs=0) in all directions...
   generate_background_mask();
 
   vector<int> stride_idx;
   int cur_idx = 0;
 
+
+  // The merging is done in three steps: first with only few strides are used until 0.98
+  // then more long-range edges... and so on
   //iter 1
   ITER = 1;
   CONNECT_THRESHOLD = CONNECT_THRESHOLD_ITER1;
