@@ -193,7 +193,7 @@ def aspp_layer(inputs, output_stride=16, scope="aspp"):
     aspp_conv3x3_18 = tf.contrib.layers.conv2d(inputs, 256, [3, 3],
                                                rate=18*rate_ratio, scope='conv3_18',
                                                **get_resnet_conv2d_params())
-    avg_pool = tf.reduce_mean(inputs, [1, 2], keepdims=True)
+    avg_pool = tf.reduce_mean(inputs, [1, 2], keep_dims=True)
     avg_pool = tf.contrib.layers.conv2d(avg_pool, 256, [1, 1], scope='conv_avg_pool',
                                         **get_resnet_conv2d_params())
     avg_pool = tf.image.resize_bilinear(avg_pool, [org_shape[1], org_shape[2]])
