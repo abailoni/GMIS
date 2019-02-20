@@ -612,25 +612,12 @@ def post_processing(args, process_id, counter, demo_files_queue,
         tmp_mask = postprocess_prob(tmp_mask_prob)
         # Some magic to combine affinities and semantic prediction.
         # !!! Both new outputs have the same shape (X, Y, nb_strides, nb_directions = 8)
-        # TODO: double check this!
         tmp_prob, tmp_class_prob = process_probability_array(tmp_aff_prob, tmp_mask_prob,
                                                              tmp_strides)
 
         inst_input_bin_file = tmp_output_file_name.replace(
             '.png', '%d_%0.2d.input.bin' % (mask_i, j))
 
-        """
-        # ----------------------------------------
-        This is the part that I need to modify!!
-        
-        They save the data and then they call the C++ code, so I should be able to modify it accordingly
-        
-        - not clear: I guess the agglo can obviously return more than one mask (but they restrict them selves to a
-          small area of the image)
-        - the cool thing is that I can leave the rest un-touched as soon as 
-        
-        # ----------------------------------------
-        """
         # # Write data to disk:
         # with open(inst_input_bin_file, 'wb') as file:
         #   shape = np.array(tmp_prob.shape, dtype=np.int32)
